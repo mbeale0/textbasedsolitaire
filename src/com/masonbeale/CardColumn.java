@@ -15,10 +15,13 @@ public class CardColumn {
     }
     public Card[] getStack(int numOfCards){
         Card[] cards = new Card[numOfCards];
-        //System.out.println(cardColumn.size());
-        int cardIndex =0;
-        for(int i = cardColumn.size() - 1; i >= numOfCards; i--){
 
+        int cardIndex =0;
+
+        // TODO The issue lies here, in that the for loop iterates to many times
+        // EG: when size is 3, i = 2, and numofCards =1, the loop iteratres twice but it should only once
+        for(int i = cardColumn.size() - 1; i >=  numOfCards; i--){
+            System.out.println("IN: " + cardIndex);
             cards[cardIndex] = cardColumn.get(i);
             cardColumn.remove(i);
             cardIndex++;

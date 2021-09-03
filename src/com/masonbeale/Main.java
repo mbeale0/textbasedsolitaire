@@ -12,6 +12,6 @@ public class Main {
 
         System.out.println("Enter 1: ");
         scanner.nextInt();
-        deck.MoveCard(2, 1, 1);
+        deck.MoveCard(3, 2, 1);
     }
 }
