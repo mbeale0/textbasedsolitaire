@@ -48,4 +48,7 @@ public class CardColumn {
     public Card getCard(int index) {
         return cardColumn.get(index);
     }
+    public int getColSize(){
+        return cardColumn.size();
+    }
 }

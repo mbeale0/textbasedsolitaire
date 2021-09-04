@@ -108,6 +108,8 @@ public class Solitaire {
                 }
 
                 if(!hasDoneFirstIndex){
+                    System.out.println("K: " + k + " & I: " + i);
+                    System.out.println(cardColumns.get(k).getColSize());
                     firstIndexLength = cardColumns.get(k).getCard(i).getCardNumber() < 10 ? 2 : 1 ;
                     hasDoneFirstIndex = true;
                 }
