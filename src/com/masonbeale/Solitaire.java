@@ -82,24 +82,15 @@ public class Solitaire {
                 cardDeck.remove(index);
                 col++;
             }
-            System.out.println("Size: " + cardColumns.get(j).getCardColumn().size());
             System.out.println();
         }
     }
     public void MoveCard(int fromCol, int toCol, int numCards){
-
-        System.out.print("SIZEF: " + cardColumns.get(fromCol-1).getCardColumn().size());
-        System.out.println("  SIZET: " + cardColumns.get(toCol-1).getCardColumn().size());
-        System.out.println("=====================");
         Card[] cardsToMove;
         cardsToMove = cardColumns.get(fromCol-1).getStack(numCards);
         for(int i = numCards-1; i >=0; i--){
             cardColumns.get(toCol-1).addToCardColumn(cardsToMove[i]);
         }
-        System.out.println("=====================");
-        System.out.print("SIZEF: " + cardColumns.get(fromCol-1).getCardColumn().size());
-        System.out.println("  SIZET: " + cardColumns.get(toCol-1).getCardColumn().size());
-        System.out.println("=====================");
         redrawAfterPlay();
     }
     private void redrawAfterPlay(){
@@ -107,9 +98,7 @@ public class Solitaire {
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
 
-
             for(int k =0; k < 7 - i; k++){
-                //System.out.println("CARD: " +cardColumns.get(1).getCardColumn().size());
                 if(i > 0){
                     int iteratorI = i;
                     while (iteratorI >cardColumns.get(k).getCardColumn().size() - 1) {
@@ -123,15 +112,12 @@ public class Solitaire {
                     hasDoneFirstIndex = true;
                 }
                 try{
-                    //System.out.print("{I: " + i + "K: " + k + " size: " + (cardColumns.get(k).getCardColumn().size()-1) + "}");
                     if(!cardColumns.get(k).getCard(i).isFlipped()){
                         if(firstIndexLength == 2 ){
                             System.out.print("  x ");
-                            //System.out.print("1a");
                         }
                         else {
                             System.out.print(" x  ");
-                            //System.out.print("2a");
                         }
                     }
 
@@ -139,9 +125,7 @@ public class Solitaire {
                         System.out.print("    ");
                     }
                     else {
-                        //System.out.print("3a");
                         System.out.print(cardColumns.get(k).getCard(i));
-                        //System.out.print("<-Size " + cardColumns.get(k).getCardColumn().size());
                     }
 
                 }
