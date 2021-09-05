@@ -5,13 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Solitaire {
-    List<Card> cardDeck = new ArrayList<Card>();
-    List<Card> dealtCard = new ArrayList<Card>();
-    List<CardColumn> cardColumns = new ArrayList<CardColumn>();
-    List<Card> drawPile = new ArrayList<Card>();
+    private List<Card> cardDeck = new ArrayList<Card>();
+    private List<Card> dealtCard = new ArrayList<Card>();
+    private List<CardColumn> cardColumns = new ArrayList<CardColumn>();
+    private List<Card> drawPile = new ArrayList<Card>();
     private boolean inDrawPile = false;
+    private Card[] cardFoundation = new Card[4];
 
-    Card[] cardFoundation = new Card[4];
     public Solitaire(){
         CreateInitialDeck();
         for(int i = 0; i < cardFoundation.length; i++){
@@ -37,12 +37,12 @@ public class Solitaire {
         }
     }
 
-    public void dealGame(){
+    public void dealInitialGame(){
         for(int i = 0; i < cardFoundation.length; i++) {
-            if(cardFoundation[i] == null && i !=3){
+            if(i !=3){
                 System.out.print("0, ");
             }
-            else if(cardFoundation[3] == null){
+            else{
                 System.out.print("0");
             }
         }
@@ -85,39 +85,24 @@ public class Solitaire {
             System.out.println();
         }
     }
-    public void MoveCard(int fromCol, int toCol, int numCards){
-        Card[] cardsToMove;
-        cardsToMove = cardColumns.get(fromCol-1).getStack(numCards);
-        for(int i = numCards-1; i >=0; i--){
-            cardColumns.get(toCol-1).addToCardColumn(cardsToMove[i]);
-        }
-        redrawAfterPlay();
-    }
+
     private void redrawAfterPlay(){
         for(int i = 0; i < 7; i++){
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
 
             for(int k =0; k < 7 - i; k++){
-                if(i > 0){
-                    int iteratorI = i;
-                    while (iteratorI >cardColumns.get(k).getCardColumn().size() - 1) {
-                        System.out.print(" h  ");
-                        iteratorI--;
-                    }
-                }
                 if(!hasDoneFirstIndex){
                     if(i < cardColumns.get(k).getColSize()){
-                        //System.out.println("K: " + k + " & I: " + i);
-                        //System.out.println(cardColumns.get(k).getColSize());
+
                         firstIndexLength = cardColumns.get(k).getCard(i).getCardNumber() < 10 ? 2 : 1 ;
                         hasDoneFirstIndex = true;
                     }
                 }
-
-                //System.out.print("K: " + k + " & I: " + i + " S: " + cardColumns.get(k).getColSize());
-                if(i < cardColumns.get(k).getColSize()){
-                    //System.out.print("if");
+                if(i >= cardColumns.get(k).getColSize()){
+                    System.out.print("    ");
+                }
+                else{
                     if(!cardColumns.get(k).getCard(i).isFlipped()){
                         if(firstIndexLength == 2 ){
                             System.out.print("  x ");
@@ -126,46 +111,22 @@ public class Solitaire {
                             System.out.print(" x  ");
                         }
                     }
-                    else if(k > cardColumns.get(k).getCardColumn().size()-1){
-                        System.out.print("  p  ");
-                    }
                     else {
                         System.out.print(cardColumns.get(k).getCard(i));
                     }
                 }
-                else {
-                    //System.out.print("h");
-                    if(firstIndexLength == 2 ){
-                        System.out.print("  x ");
-                    }
-                    else if(firstIndexLength == 1) {
-                        System.out.print(" x  ");
-                    }
-                }
             }
-            //System.out.print("size: "  + cardColumns.get(i).getColSize());
             System.out.println();
         }
 
     }
-    private void OLDPrintCardBase(int i, int index) {
-        dealtCard.add(cardDeck.get(index));
-        cardDeck.remove(index);
-        int tester = i + 1;
-        while (tester < 7) {
-            System.out.print("x  ");
-            index = (int) (Math.random() * cardDeck.size());
-            dealtCard.add(cardDeck.get(index));
-            cardDeck.remove(index);
-            tester++;
-        }
 
-    }
-    public void printInitialDeck(){
-        Iterator<Card> iterator = cardDeck.iterator();
-        while (iterator.hasNext()){
-            System.out.println(iterator.next().toString());
+    public void MoveCard(int fromCol, int toCol, int numCards){
+        Card[] cardsToMove;
+        cardsToMove = cardColumns.get(fromCol-1).getStack(numCards);
+        for(int i = numCards-1; i >=0; i--){
+            cardColumns.get(toCol-1).addToCardColumn(cardsToMove[i]);
         }
+        redrawAfterPlay();
     }
-
 }
