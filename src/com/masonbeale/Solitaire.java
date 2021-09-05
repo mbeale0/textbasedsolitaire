@@ -102,40 +102,48 @@ public class Solitaire {
                 if(i > 0){
                     int iteratorI = i;
                     while (iteratorI >cardColumns.get(k).getCardColumn().size() - 1) {
-                        System.out.print("    ");
+                        System.out.print(" h  ");
                         iteratorI--;
                     }
                 }
-
                 if(!hasDoneFirstIndex){
-                    System.out.println("K: " + k + " & I: " + i);
-                    System.out.println(cardColumns.get(k).getColSize());
-                    firstIndexLength = cardColumns.get(k).getCard(i).getCardNumber() < 10 ? 2 : 1 ;
-                    hasDoneFirstIndex = true;
+                    if(i < cardColumns.get(k).getColSize()){
+                        //System.out.println("K: " + k + " & I: " + i);
+                        //System.out.println(cardColumns.get(k).getColSize());
+                        firstIndexLength = cardColumns.get(k).getCard(i).getCardNumber() < 10 ? 2 : 1 ;
+                        hasDoneFirstIndex = true;
+                    }
                 }
-                try{
+
+                //System.out.print("K: " + k + " & I: " + i + " S: " + cardColumns.get(k).getColSize());
+                if(i < cardColumns.get(k).getColSize()){
+                    //System.out.print("if");
                     if(!cardColumns.get(k).getCard(i).isFlipped()){
                         if(firstIndexLength == 2 ){
                             System.out.print("  x ");
                         }
-                        else {
+                        else if(firstIndexLength == 1) {
                             System.out.print(" x  ");
                         }
                     }
-
                     else if(k > cardColumns.get(k).getCardColumn().size()-1){
-                        System.out.print("    ");
+                        System.out.print("  p  ");
                     }
                     else {
                         System.out.print(cardColumns.get(k).getCard(i));
                     }
-
                 }
-                catch (IndexOutOfBoundsException e){
-
+                else {
+                    //System.out.print("h");
+                    if(firstIndexLength == 2 ){
+                        System.out.print("  x ");
+                    }
+                    else if(firstIndexLength == 1) {
+                        System.out.print(" x  ");
+                    }
                 }
-
             }
+            //System.out.print("size: "  + cardColumns.get(i).getColSize());
             System.out.println();
         }
 

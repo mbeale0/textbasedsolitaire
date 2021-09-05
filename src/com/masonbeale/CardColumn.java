@@ -18,9 +18,6 @@ public class CardColumn {
 
         int cardIndex =0;
 
-        // TODO The issue lies here, in that the for loop iterates to many times
-        // EG: when size is 3, i = 2, and numofCards =1, the loop iteratres twice but it should only once
-        System.out.println("size: " + cardColumn.size());
         if(numOfCards == cardColumn.size()-1){
             for(int i = cardColumn.size() - 1; i >  numOfCards-1; i--){
                 cards[cardIndex] = cardColumn.get(i);
