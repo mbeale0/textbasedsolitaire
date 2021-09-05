@@ -14,7 +14,7 @@ public class Solitaire {
     public Solitaire(){
         CreateInitialDeck();
         Arrays.fill(cardFoundation, null);
-        
+
         for(int i =0; i < 7; i++){
             cardColumns[i] = new CardColumn();
         }
