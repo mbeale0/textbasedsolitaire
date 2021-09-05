@@ -4,6 +4,12 @@ public class Card {
     private final int cardNumber;
     private final Suit cardSuit;
     private boolean isFlipped = false;
+    private final Color cardColor;
+
+    public enum Color{
+        red,
+        black
+    }
     public enum Suit{
         Spades,
         Clubs,
@@ -14,6 +20,12 @@ public class Card {
     public Card(int cardNumber, Suit cardSuit) {
         this.cardNumber = cardNumber;
         this.cardSuit = cardSuit;
+        if(cardSuit == Suit.Clubs || cardSuit == Suit.Spades){
+            cardColor = Color.black;
+        }
+        else {
+            cardColor = Color.red;
+        }
     }
 
     public void setFlipped(boolean flipped) {
@@ -30,6 +42,10 @@ public class Card {
 
     public Suit getCardSuit() {
         return cardSuit;
+    }
+
+    public Color getCardColor() {
+        return cardColor;
     }
 
     @Override

@@ -10,13 +10,15 @@ public class Main {
         deck.dealInitialGame();
         Scanner scanner = new Scanner((System.in));
 
-        System.out.println("Enter 1: ");
+        /*System.out.println("Enter 1: ");
         scanner.nextInt();
-        deck.MoveCardToCol(2, 1, 1);
+        deck.MoveCardToCol(2, 1, 1);*/
 
+        System.out.println("Enter 1: ");
+        int col = scanner.nextInt();
         System.out.println("Enter 2: ");
-        scanner.nextInt();
-        deck.MoveCardToFoundation(3, 1);
+        int found = scanner.nextInt();
+        deck.MoveCardToFoundation(col, found);
 
         System.out.println("Enter 3: ");
         scanner.nextInt();

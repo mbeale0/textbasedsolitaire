@@ -115,6 +115,7 @@ public class Solitaire {
         else {
             System.out.println("                " + drawPile.get(posInDrawPile) );
         }
+        System.out.println();
         for(int i = 0; i < 7; i++){
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
@@ -150,17 +151,66 @@ public class Solitaire {
     }
 
     public void MoveCardToCol(int fromCol, int toCol, int numCards){
-        Card[] cardsToMove;
-        cardsToMove = cardColumns[fromCol-1].getStack(numCards);
-        for(int i = numCards-1; i >=0; i--){
-            cardColumns[toCol-1].addToCardColumn(cardsToMove[i]);
+
+        int fromCardToCheck = cardColumns[fromCol-1].getColSize() - numCards;
+        int toCardToCheck = cardColumns[toCol-1].getColSize()-1;
+
+        if(ableToMoveCardsToCol(cardColumns[fromCol - 1], cardColumns[toCol - 1], fromCardToCheck, toCardToCheck) == true){
+
+            Card[] cardsToMove;
+            cardsToMove = cardColumns[fromCol-1].getStack(numCards);
+            for(int i = numCards-1; i >=0; i--){
+                cardColumns[toCol-1].addToCardColumn(cardsToMove[i]);
+            }
         }
+
         redrawAfterPlay();
     }
-    public void MoveCardToFoundation(int fromCol, int toFoundation){
 
-        Card[] cardToMove = cardColumns[fromCol-1].getStack(1);
-        cardFoundation[toFoundation-1] = cardToMove[0];
+    private boolean ableToMoveCardsToCol(CardColumn fromCol, CardColumn toCol, int fromCardToCheck, int toCardToCheck) {
+        boolean areNumbersInOrder = false;
+        boolean areDifferentSuits = false;
+        boolean isAbleToMove = false;
+        if (toCol.getCard(toCardToCheck).getCardNumber() - fromCol.getCard(fromCardToCheck).getCardNumber() == 1){
+            areNumbersInOrder = true;
+        }
+        if(fromCol.getCard(fromCardToCheck).getCardColor() != toCol.getCard(toCardToCheck).getCardColor()){
+            areDifferentSuits = true;
+        }
+        if(areNumbersInOrder == true && areDifferentSuits == true){
+            isAbleToMove = true;
+        }
+        return isAbleToMove;
+    }
+    private boolean ableToMoveCardsToFoundation(CardColumn cardColumn, int fromCardToCheck, int toFoundationToCheck) {
+        boolean areNumbersInOrder = false;
+        boolean areSameSuit = false;
+        boolean isAbleToMove = false;
+        if(cardFoundation[toFoundationToCheck-1] != null){
+            if (cardColumn.getCard(fromCardToCheck).getCardNumber() - cardFoundation[toFoundationToCheck-1].getCardNumber() == 1){
+                areNumbersInOrder = true;
+            }
+            if(cardColumn.getCard(fromCardToCheck).getCardColor() == cardFoundation[toFoundationToCheck-1].getCardColor()){
+                areSameSuit = true;
+            }
+            if(areNumbersInOrder == true && areSameSuit == true){
+                isAbleToMove = true;
+            }
+        }
+        else{
+            isAbleToMove = true;
+        }
+        return isAbleToMove;
+    }
+    public void MoveCardToFoundation(int fromCol, int toFoundation){
+        int fromCardToCheck = cardColumns[fromCol-1].getColSize() - 1;
+        System.out.println("S: " + cardColumns[fromCol-1].getColSize());
+        if(ableToMoveCardsToFoundation(cardColumns[fromCol - 1], fromCardToCheck, toFoundation) == true){
+
+            Card[] cardToMove = cardColumns[fromCol-1].getStack(1);
+            cardFoundation[toFoundation-1] = cardToMove[0];
+        }
+
 
         redrawAfterPlay();
     }

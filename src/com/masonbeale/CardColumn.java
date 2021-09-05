@@ -13,6 +13,7 @@ public class CardColumn {
     public Card getTopCard(){
         return cardColumn.get(cardColumn.size()-1);
     }
+
     public Card[] getStack(int numOfCards){
         Card[] cards = new Card[numOfCards];
 
@@ -26,13 +27,14 @@ public class CardColumn {
             }
         }
         else {
+            System.out.println("N: " + numOfCards);
             for(int i = cardColumn.size() - 1; i >  numOfCards; i--){
                 cards[cardIndex] = cardColumn.get(i);
                 cardColumn.remove(i);
                 cardIndex++;
             }
         }
-
+        cardColumn.get(cardColumn.size()-1).setFlipped(true);
         return cards;
     }
     public Card getBottomCard(){
