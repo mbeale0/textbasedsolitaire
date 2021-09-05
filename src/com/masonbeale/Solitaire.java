@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Solitaire {
     private List<Card> cardDeck = new ArrayList<Card>();
-    private List<Card> dealtCard = new ArrayList<Card>();
     private List<CardColumn> cardColumns = new ArrayList<CardColumn>();
     private List<Card> drawPile = new ArrayList<Card>();
     private boolean inDrawPile = false;
@@ -91,7 +90,7 @@ public class Solitaire {
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
 
-            for(int k =0; k < 7 - i; k++){
+            for(int k =0; k < 7 ; k++){
                 if(!hasDoneFirstIndex){
                     if(i < cardColumns.get(k).getColSize()){
 
@@ -105,6 +104,7 @@ public class Solitaire {
                 else{
                     if(!cardColumns.get(k).getCard(i).isFlipped()){
                         if(firstIndexLength == 2 ){
+
                             System.out.print("  x ");
                         }
                         else if(firstIndexLength == 1) {
@@ -118,7 +118,6 @@ public class Solitaire {
             }
             System.out.println();
         }
-
     }
 
     public void MoveCard(int fromCol, int toCol, int numCards){
