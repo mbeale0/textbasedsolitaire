@@ -10,6 +10,7 @@ public class Solitaire {
     private List<Card> drawPile = new ArrayList<>();
     private boolean inDrawPile = false;
     private Card[] cardFoundation = new Card[4];
+    private int posInDrawPile = -1;
 
     public Solitaire(){
         CreateInitialDeck();
@@ -44,9 +45,7 @@ public class Solitaire {
                 System.out.print("0");
             }
         }
-        if(!inDrawPile){
-            System.out.println("             |O|" );
-        }
+        System.out.println("             |O|" );
         System.out.println();
         for(int j =0; j < 7; j++){
             boolean hasDoneFirstIndex = false;
@@ -82,9 +81,40 @@ public class Solitaire {
             }
             System.out.println();
         }
+        int cardsAdded = 0;
+        while (cardsAdded < cardDeck.size()){
+            int index = (int)(Math.random() * cardDeck.size());
+            drawPile.add(cardDeck.get(index));
+            cardDeck.remove(index);
+            cardsAdded++;
+        }
     }
 
     private void redrawAfterPlay(){
+        for(int i = 0; i < cardFoundation.length; i++) {
+            if(i !=3){
+                if(cardFoundation[i] == null){
+                    System.out.print("0, ");
+                }
+                else{
+                    System.out.print(cardFoundation[i] + ", ");
+                }
+            }
+            else{
+                if(cardFoundation[i] == null){
+                    System.out.print("0");
+                }
+                else{
+                    System.out.print(cardFoundation[i]);
+                }
+            }
+        }
+        if(posInDrawPile == -1){
+            System.out.println("                |O|" );
+        }
+        else {
+            System.out.println("                " + drawPile.get(posInDrawPile) );
+        }
         for(int i = 0; i < 7; i++){
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
@@ -119,11 +149,25 @@ public class Solitaire {
         }
     }
 
-    public void MoveCard(int fromCol, int toCol, int numCards){
+    public void MoveCardToCol(int fromCol, int toCol, int numCards){
         Card[] cardsToMove;
         cardsToMove = cardColumns[fromCol-1].getStack(numCards);
         for(int i = numCards-1; i >=0; i--){
             cardColumns[toCol-1].addToCardColumn(cardsToMove[i]);
+        }
+        redrawAfterPlay();
+    }
+    public void MoveCardToFoundation(int fromCol, int toFoundation){
+
+        Card[] cardToMove = cardColumns[fromCol-1].getStack(1);
+        cardFoundation[toFoundation-1] = cardToMove[0];
+
+        redrawAfterPlay();
+    }
+    public void useDrawPile(){
+        posInDrawPile += 3;
+        if(posInDrawPile >= drawPile.size()){
+            posInDrawPile = -1;
         }
         redrawAfterPlay();
     }
