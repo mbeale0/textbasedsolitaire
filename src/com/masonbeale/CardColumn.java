@@ -18,8 +18,11 @@ public class CardColumn {
         Card[] cards = new Card[numOfCards];
 
         int cardIndex =0;
-
-        if(numOfCards == cardColumn.size()-1){
+        if(numOfCards == 1){
+            cards[cardIndex] = cardColumn.get(cardColumn.size()-1);
+            cardColumn.remove(cardColumn.size()-1);
+        }
+        else if(numOfCards == cardColumn.size()-1){
             for(int i = cardColumn.size() - 1; i >  numOfCards-1; i--){
                 cards[cardIndex] = cardColumn.get(i);
                 cardColumn.remove(i);

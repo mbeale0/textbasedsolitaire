@@ -3,12 +3,12 @@ package com.masonbeale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 public class Solitaire {
     private final List<Card> cardDeck = new ArrayList<>();
     private final CardColumn[] cardColumns = new CardColumn[7];
     private List<Card> drawPile = new ArrayList<>();
-    private boolean inDrawPile = false;
     private Card[] cardFoundation = new Card[4];
     private int posInDrawPile = -1;
 
@@ -47,31 +47,29 @@ public class Solitaire {
         }
         System.out.println("             |O|" );
         System.out.println();
-        for(int j =0; j < 7; j++){
+        for(int j =0; j < 7; j++) {
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
             int spacesIndex = j;
             int col = j;
 
-            for(int k =7; k != j; k--){
-                int index = (int)(Math.random() * cardDeck.size());
+            for (int k = 7; k != j; k--) {
+                int index = (int) (Math.random() * cardDeck.size());
                 while (spacesIndex > 0) {
                     System.out.print("    ");
                     spacesIndex -= 1;
                 }
-                if(!hasDoneFirstIndex){
-                    firstIndexLength = cardDeck.get(index).getCardNumber() < 10 ? 2 : 1 ;
+                if (!hasDoneFirstIndex) {
+                    firstIndexLength = cardDeck.get(index).getCardNumber() < 10 ? 2 : 1;
                     hasDoneFirstIndex = true;
                 }
-                if(k < 7 ){
-                    if(firstIndexLength == 2){
+                if (k < 7) {
+                    if (firstIndexLength == 2) {
                         System.out.print("  x ");
-                    }
-                    else {
+                    } else {
                         System.out.print(" x  ");
                     }
-                }
-                else {
+                } else {
                     System.out.print(cardDeck.get(index));
                     cardDeck.get(index).setFlipped(true);
                 }
@@ -116,7 +114,7 @@ public class Solitaire {
             System.out.println("                " + drawPile.get(posInDrawPile) );
         }
         System.out.println();
-        for(int i = 0; i < 7; i++){
+        for(int i = 0; i < getMaxColLength(); i++){
             boolean hasDoneFirstIndex = false;
             int firstIndexLength = -1;
 
@@ -142,7 +140,7 @@ public class Solitaire {
                         }
                     }
                     else {
-                        System.out.print(cardColumns[k].getCard(i));
+                        System.out.print(" " + cardColumns[k].getCard(i) + " ");
                     }
                 }
             }
@@ -197,16 +195,14 @@ public class Solitaire {
                 isAbleToMove = true;
             }
         }
-        else{
+        else if(cardColumn.getCard(fromCardToCheck).getCardNumber() == 1){
             isAbleToMove = true;
         }
         return isAbleToMove;
     }
     public void MoveCardToFoundation(int fromCol, int toFoundation){
         int fromCardToCheck = cardColumns[fromCol-1].getColSize() - 1;
-        System.out.println("S: " + cardColumns[fromCol-1].getColSize());
         if(ableToMoveCardsToFoundation(cardColumns[fromCol - 1], fromCardToCheck, toFoundation) == true){
-
             Card[] cardToMove = cardColumns[fromCol-1].getStack(1);
             cardFoundation[toFoundation-1] = cardToMove[0];
         }
@@ -220,5 +216,15 @@ public class Solitaire {
             posInDrawPile = -1;
         }
         redrawAfterPlay();
+    }
+    private int getMaxColLength(){
+        int maxColLength = 0;
+
+        for(int i = 0; i < cardColumns.length -1; i ++){
+            if(cardColumns[i].getColSize() < cardColumns[i+1].getColSize() ){
+                maxColLength = cardColumns[i+1].getColSize();
+            }
+        }
+        return maxColLength;
     }
 }
