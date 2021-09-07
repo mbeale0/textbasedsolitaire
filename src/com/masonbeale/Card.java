@@ -39,11 +39,7 @@ public class Card {
     public int getCardNumber() {
         return cardNumber;
     }
-
-    public Suit getCardSuit() {
-        return cardSuit;
-    }
-
+    
     public Color getCardColor() {
         return cardColor;
     }

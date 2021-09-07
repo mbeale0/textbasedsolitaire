@@ -4,51 +4,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CardColumn {
-    private List<Card> cardColumn = new ArrayList<Card>();
-    int cards = 0;
+    private List<Card> cardColumn = new ArrayList<>();
     public void addToCardColumn(Card card) {
         cardColumn.add(card);
-    }
-
-    public Card getTopCard(){
-        return cardColumn.get(cardColumn.size()-1);
     }
 
     public Card[] getStack(int numOfCards){
         Card[] cards = new Card[numOfCards];
 
         int cardIndex =0;
+        int colIndexSize = cardColumn.size() - 1;
         if(numOfCards == 1){
-            cards[cardIndex] = cardColumn.get(cardColumn.size()-1);
-            cardColumn.remove(cardColumn.size()-1);
+            cards[cardIndex] = cardColumn.get(colIndexSize);
+            cardColumn.remove(colIndexSize);
         }
-        else if(numOfCards == cardColumn.size()-1){
-            for(int i = cardColumn.size() - 1; i >  numOfCards-1; i--){
-                cards[cardIndex] = cardColumn.get(i);
-                cardColumn.remove(i);
-                cardIndex++;
+        else{
+            int timesToLoop = colIndexSize -numOfCards;
+            for(int i = colIndexSize; i > timesToLoop; i--){
+                changeCards(cards, cardIndex, i);
             }
         }
-        else {
-            System.out.println("N: " + numOfCards);
-            for(int i = cardColumn.size() - 1; i >  numOfCards; i--){
-                cards[cardIndex] = cardColumn.get(i);
-                cardColumn.remove(i);
-                cardIndex++;
-            }
+        if(cardColumn.size() != 0){
+            colIndexSize = cardColumn.size()-1;
+            cardColumn.get(colIndexSize).setFlipped(true);
         }
-        cardColumn.get(cardColumn.size()-1).setFlipped(true);
+
         return cards;
     }
-    public Card getBottomCard(){
-        return cardColumn.get(0);
-    }
-    public List<Card> getCardColumn() {
-        return cardColumn;
+
+    private void changeCards(Card[] cards, int cardIndex, int i) {
+        cards[cardIndex] = cardColumn.get(i);
+        cardColumn.remove(i);
+        cardIndex++;
+
     }
 
     public Card getCard(int index) {
-        return cardColumn.get(index);
+        if(cardColumn.size() != 0){
+            return cardColumn.get(index);
+        }
+        else {
+            return null;
+        }
     }
     public int getColSize(){
         return cardColumn.size();

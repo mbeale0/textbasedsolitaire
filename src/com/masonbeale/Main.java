@@ -11,38 +11,73 @@ public class Main {
         printOptions();
         deck.dealInitialGame();
         while (isPLaying){
-            System.out.println("Enter command: ");
-            userInput = optionsScanner.nextLine().toLowerCase();
-            //optionsScanner.next();
-            System.out.println("UI: " + userInput);
-            if(userInput.toLowerCase() == "q"){
-                quit();
-            }
-            else if(userInput.equals("mc")){
-                moveToCol();
-            }
-            else if(userInput.equals("mt")){
-                moveToTop();
-            }
-            else if(userInput.equals("d")){
-                useDrawPile();
-            }
-            else if(userInput.equals("o")){
-                printOptions();
+            if(!deck.isHasWon()){
+                playTurn(optionsScanner);
             }
             else {
-                System.out.println("Invalid output");
+                checkPlayAgain(optionsScanner);
             }
+
         }
 
     }
+
+    private static void playTurn(Scanner optionsScanner) {
+        String userInput;
+        System.out.println("Enter command: ");
+        userInput = optionsScanner.nextLine().toLowerCase();
+        if(userInput.toLowerCase() == "q"){
+            quit();
+        }
+        else if(userInput.equals("mc")){
+            moveToCol();
+        }
+        else if(userInput.equals("mt")){
+            moveToTop();
+        }
+        else if(userInput.equals("mdc")){
+            moveDrawToCol();
+        }
+        else if(userInput.equals("mdt")){
+            moveDrawToTop();
+        }
+        else if(userInput.equals("d")){
+            useDrawPile();
+        }
+        else if(userInput.equals("o")){
+            printOptions();
+        }
+        else if(userInput.equals("q")){
+            quit();
+        }
+        else {
+            System.out.println("Invalid input");
+        }
+    }
+
+    private static void checkPlayAgain(Scanner optionsScanner) {
+        System.out.println("Play Again? y/n");
+        String playAgain = optionsScanner.nextLine().toLowerCase();
+        if(playAgain == "y"){
+            deck.setHasWon(false);
+        }
+        else if(playAgain == "n") {
+            isPLaying = false;
+        }
+        else {
+            System.out.println("Invalid input");
+        }
+    }
+
     private static void printOptions(){
         System.out.println("Options:\n" +
-                "\tq  - Quit\n" +
-                "\tmc - Move to col\n" +
-                "\tmt - Move to top\n" +
-                "\td  - Draw from pile\n" +
-                "\to  - Print options");
+                "\tq   - Quit\n" +
+                "\tmc  - Move to col\n" +
+                "\tmt  - Move to top\n" +
+                "\td   - Draw from pile\n" +
+                "\tmdc - Move draw to col\n" +
+                "\tmdt - Move draw to top\n" +
+                "\to   - Print options");
 
     }
     private static void moveToCol(){
@@ -55,7 +90,7 @@ public class Main {
 
         System.out.println("Enter # of cards you're moving");
         int numCards = valueScanner.nextInt();
-        deck.MoveCardToCol(fromCol, toCol, numCards);
+        deck.moveCardFromColToCol(fromCol, toCol, numCards);
     }
     private static void moveToTop(){
         Scanner valueScanner = new Scanner(System.in);
@@ -69,6 +104,18 @@ public class Main {
     }
     private static void useDrawPile(){
         deck.useDrawPile();
+    }
+    private static void moveDrawToCol(){
+        Scanner valueScanner = new Scanner(System.in);
+        System.out.println("Enter # of col you're moving to");
+        int toCol = valueScanner.nextInt();
+        deck.moveCardFromDrawToCol(toCol);
+    }
+    private static void moveDrawToTop(){
+        Scanner valueScanner = new Scanner(System.in);
+        System.out.println("Enter # of top you're moving to");
+        int toFound = valueScanner.nextInt();
+        deck.moveCardFromDrawToFoundation(toFound);
     }
     private static void quit(){
         isPLaying = false;
