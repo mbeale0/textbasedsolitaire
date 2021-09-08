@@ -12,7 +12,7 @@ public class CardColumn {
     public Card[] getStack(int numOfCards){
         Card[] cards = new Card[numOfCards];
 
-        int cardIndex =0;
+        int cardIndex = 0;
         int colIndexSize = cardColumn.size() - 1;
         if(numOfCards == 1){
             cards[cardIndex] = cardColumn.get(colIndexSize);
@@ -38,7 +38,17 @@ public class CardColumn {
         cardIndex++;
 
     }
-
+    public Card getBottomCard(){
+        if(cardColumn.size() == 0){
+            return null;
+        }
+        Card bottomCard = cardColumn.get(cardColumn.size()-1);
+        cardColumn.remove(cardColumn.get(cardColumn.size()-1));
+        if(cardColumn.size() != 0){
+            cardColumn.get(cardColumn.size()-1).setFlipped(true);
+        }
+        return bottomCard;
+    }
     public Card getCard(int index) {
         if(cardColumn.size() != 0){
             return cardColumn.get(index);

@@ -4,13 +4,12 @@ import java.util.Scanner;
 
 public class Main {
     static Solitaire deck = new Solitaire();
-    static boolean isPLaying = true;
+    static boolean isPlaying = true;
     public static void main(String[] args) {
         Scanner optionsScanner = new Scanner((System.in));
-        String userInput;
         printOptions();
         deck.dealInitialGame();
-        while (isPLaying){
+        while (isPlaying){
             if(!deck.isHasWon()){
                 playTurn(optionsScanner);
             }
@@ -19,7 +18,6 @@ public class Main {
             }
 
         }
-
     }
 
     private static void playTurn(Scanner optionsScanner) {
@@ -62,7 +60,7 @@ public class Main {
             deck.setHasWon(false);
         }
         else if(playAgain == "n") {
-            isPLaying = false;
+            isPlaying = false;
         }
         else {
             System.out.println("Invalid input");
@@ -118,6 +116,6 @@ public class Main {
         deck.moveCardFromDrawToFoundation(toFound);
     }
     private static void quit(){
-        isPLaying = false;
+        isPlaying = false;
     }
 }

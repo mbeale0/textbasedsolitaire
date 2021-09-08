@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Collections;
 
 public class Solitaire {
-    private final List<Card> cardDeck = new ArrayList<>();
+    public final List<Card> cardDeck = new ArrayList<>();
     private final CardColumn[] cardColumns = new CardColumn[7];
     private List<Card> drawPile = new ArrayList<>();
     private Card[] cardFoundation = new Card[4];
@@ -24,15 +24,9 @@ public class Solitaire {
 
     private void CreateInitialDeck() {
         for(int i = 1; i <= 13; i++){
+            cardDeck.add(new Card(i, Card.Suit.Spades));
             cardDeck.add(new Card(i, Card.Suit.Clubs));
-        }
-        for(int i = 1; i <= 13; i++){
-            cardDeck.add(new Card(i, Card.Suit.Clubs));
-        }
-        for(int i = 1; i <= 13; i++){
             cardDeck.add(new Card(i, Card.Suit.Diamonds));
-        }
-        for(int i = 1; i <= 13; i++){
             cardDeck.add(new Card(i, Card.Suit.Hearts));
         }
     }
@@ -81,7 +75,8 @@ public class Solitaire {
             System.out.println();
         }
         int cardsAdded = 0;
-        while (cardsAdded < cardDeck.size()){
+        int initRemainingCards = cardDeck.size();
+        while (cardsAdded < initRemainingCards){
             int index = (int)(Math.random() * cardDeck.size());
             drawPile.add(cardDeck.get(index));
             cardDeck.remove(index);
@@ -100,69 +95,92 @@ public class Solitaire {
     private void redrawAfterPlay(){
         checkWin();
         if(!hasWon){
-            for(int i = 0; i < cardFoundation.length; i++) {
-                if(i !=3){
-                    if(cardFoundation[i] == null){
-                        System.out.print("0, ");
-                    }
-                    else{
-                        System.out.print(cardFoundation[i] + ", ");
-                    }
-                }
-                else{
-                    if(cardFoundation[i] == null){
-                        System.out.print("0");
-                    }
-                    else{
-                        System.out.print(cardFoundation[i]);
-                    }
-                }
-            }
-            if(posInDrawPile >= drawPile.size()){
-                posInDrawPile = -1;
-            }
-            if(posInDrawPile == -1){
-                System.out.println("                |O|" );
-            }
-            else {
-                System.out.println("                " + drawPile.get(posInDrawPile) );
-            }
+            printTopOfGameField();
             System.out.println();
-            for(int i = 0; i < getMaxColLength(); i++) {
-                boolean hasDoneFirstIndex = false;
-                int firstIndexLength = -1;
+            printBottomOfGameField();
+        }
+        else
+        {
+            System.out.println("YOU WON! CONGRATS!!!");
+        }
+    }
 
-                for (int k = 0; k < 7; k++) {
-                    if (!hasDoneFirstIndex) {
-                        if (i < cardColumns[k].getColSize() && cardColumns[k].getCard(i) != null) {
-                            firstIndexLength = cardColumns[k].getCard(i).getCardNumber() < 10 ? 2 : 1;
-                            hasDoneFirstIndex = true;
-                        }
-                    }
-                    if (i >= cardColumns[k].getColSize()) {
-                        System.out.print("    ");
-                    }
-                    else {
-                        if(cardColumns[k].getCard(i) != null){
-                            if (!cardColumns[k].getCard(i).isFlipped()) {
-                                if (firstIndexLength == 2) {
-
-                                    System.out.print("  x ");
-                                } else if (firstIndexLength == 1) {
-                                    System.out.print(" x  ");
-                                }
-                            }
-                            else {
-                                System.out.print(" " + cardColumns[k].getCard(i) + " ");
-                            }
-                        }
-                    }
-                }
-                System.out.println();
+    private void printTopOfGameField() {
+        for(int i = 0; i < cardFoundation.length; i++) {
+            printFoundation(i);
+        }
+        printDrawPile();
+    }
+    private void printFoundation(int i) {
+        if(i !=3){
+            if(cardFoundation[i] == null){
+                System.out.print("0, ");
+            }
+            else{
+                System.out.print(cardFoundation[i] + ", ");
             }
         }
         else{
-            System.out.println("YOU WON! CONGRATS!!!");
+            if(cardFoundation[i] == null){
+                System.out.print("0");
+            }
+            else{
+                System.out.print(cardFoundation[i]);
+            }
+        }
+    }
+    private void printDrawPile() {
+        if(posInDrawPile >= drawPile.size()){
+            posInDrawPile = -1;
+        }
+        if(posInDrawPile == -1){
+            System.out.println("                |O|" );
+        }
+        else {
+            System.out.println("                " + drawPile.get(posInDrawPile) );
+        }
+    }
+    private void printBottomOfGameField() {
+        for(int i = 0; i < getMaxColLength(); i++) {
+            boolean hasDoneFirstIndex = false;
+            int firstIndexLength = -1;
+
+            for (int k = 0; k < 7; k++) {
+                if (!hasDoneFirstIndex) {
+                    if (i < cardColumns[k].getColSize() && cardColumns[k].getCard(i) != null) {
+                        firstIndexLength = cardColumns[k].getCard(i).getCardNumber() < 10 ? 2 : 1;
+                        hasDoneFirstIndex = true;
+                    }
+                }
+                if (i >= cardColumns[k].getColSize()) {
+                    printSpaces();
+                }
+                else
+                {
+                    printCards(i, firstIndexLength, k);
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    private void printSpaces() {
+        System.out.print("    ");
+    }
+
+    private void printCards(int i, int firstIndexLength, int k) {
+        if(cardColumns[k].getCard(i) != null){
+            if (!cardColumns[k].getCard(i).isFlipped()) {
+                if (firstIndexLength == 2) {
+
+                    System.out.print("  x ");
+                } else if (firstIndexLength == 1) {
+                    System.out.print(" x  ");
+                }
+            }
+            else {
+                System.out.print(" " + cardColumns[k].getCard(i) + " ");
+            }
         }
     }
 
@@ -173,8 +191,10 @@ public class Solitaire {
 
         if(ableToMoveCardsFromColToCol(cardColumns[fromCol - 1], cardColumns[toCol - 1], fromCardToCheck, toCardToCheck) == true){
 
-            Card[] cardsToMove;
-            cardsToMove = cardColumns[fromCol-1].getStack(numCards);
+            Card[] cardsToMove = new Card[numCards];
+            for(int i = 0; i < numCards; i++){
+                cardsToMove[i] = cardColumns[fromCol-1].getBottomCard();
+            }
 
             for(int i = numCards-1; i >=0; i--){
                 cardColumns[toCol-1].addToCardColumn(cardsToMove[i]);
@@ -215,7 +235,6 @@ public class Solitaire {
             Card[] cardToMove = cardColumns[fromCol-1].getStack(1);
             cardFoundation[toFoundation-1] = cardToMove[0];
         }
-
         redrawAfterPlay();
     }
     public void useDrawPile(){
@@ -242,6 +261,9 @@ public class Solitaire {
         if(areNumbersInOrder == true && areDifferentSuits == true){
             isAbleToMove = true;
         }
+        else{
+            System.out.println("Invalid move");
+        }
         return isAbleToMove;
     }
     private boolean ableToMoveCardsFromDrawToCol(CardColumn toCol, int toCardToCheck) {
@@ -257,6 +279,9 @@ public class Solitaire {
         }
         if(areNumbersInOrder == true && areDifferentSuits == true){
             isAbleToMove = true;
+        }
+        else{
+            System.out.println("Invalid move");
         }
         return isAbleToMove;
     }
@@ -278,6 +303,9 @@ public class Solitaire {
         else if(cardColumn.getCard(fromCardToCheck).getCardNumber() == 1){
             isAbleToMove = true;
         }
+        else{
+            System.out.println("Invalid move");
+        }
         return isAbleToMove;
     }
     private boolean ableToMoveFromDrawToFoundation(int toFoundationToCheck) {
@@ -294,9 +322,15 @@ public class Solitaire {
             if(areNumbersInOrder == true && areSameSuit == true){
                 isAbleToMove = true;
             }
+            else{
+                System.out.println("Invalid move");
+            }
         }
         else if(drawPile.get(posInDrawPile).getCardNumber() == 1){
             isAbleToMove = true;
+        }
+        else{
+            System.out.println("Invalid move");
         }
         return isAbleToMove;
     }
