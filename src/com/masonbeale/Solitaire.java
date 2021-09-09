@@ -232,8 +232,8 @@ public class Solitaire {
     public void MoveCardToFoundation(int fromCol, int toFoundation){
         int fromCardToCheck = cardColumns[fromCol-1].getColSize() - 1;
         if(ableToMoveCardsToFoundation(cardColumns[fromCol - 1], fromCardToCheck, toFoundation) == true){
-            Card[] cardToMove = cardColumns[fromCol-1].getStack(1);
-            cardFoundation[toFoundation-1] = cardToMove[0];
+            Card cardToMove = cardColumns[fromCol-1].getBottomCard();
+            cardFoundation[toFoundation-1] = cardToMove;
         }
         redrawAfterPlay();
     }
