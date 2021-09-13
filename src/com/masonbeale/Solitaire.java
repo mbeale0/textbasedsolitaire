@@ -3,7 +3,6 @@ package com.masonbeale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
 
 public class Solitaire {
     public final List<Card> cardDeck = new ArrayList<>();
@@ -12,6 +11,7 @@ public class Solitaire {
     private Card[] cardFoundation = new Card[4];
     private int posInDrawPile = -1;
     private boolean hasWon = false;
+    boolean hasDoneFirstIndexSize = false;
 
     public Solitaire(){
         CreateInitialDeck();
@@ -32,6 +32,13 @@ public class Solitaire {
     }
 
     public void dealInitialGame(){
+        printTopOfInitialGame();
+        printBottomOfInitialGame();
+    }
+
+
+
+    private void printTopOfInitialGame() {
         for(int i = 0; i < cardFoundation.length; i++) {
             if(i !=3){
                 System.out.print("0, ");
@@ -42,38 +49,39 @@ public class Solitaire {
         }
         System.out.println("             |O|" );
         System.out.println();
-        for(int j =0; j < 7; j++) {
-            boolean hasDoneFirstIndex = false;
+    }
+    private void printBottomOfInitialGame() {
+        for(int col =0; col < 7; col++) {
+            hasDoneFirstIndexSize = false;
             int firstIndexLength = -1;
-            int spacesIndex = j;
-            int col = j;
+            int spacesIndex = col;
+            int colIndex = col;
 
-            for (int k = 7; k != j; k--) {
+            for (int row = 7; row != col; row--) {
                 int index = (int) (Math.random() * cardDeck.size());
-                while (spacesIndex > 0) {
-                    System.out.print("    ");
-                    spacesIndex -= 1;
+                if(spacesIndex != 0){
+                    printFirstSpaces(spacesIndex);
                 }
-                if (!hasDoneFirstIndex) {
-                    firstIndexLength = cardDeck.get(index).getCardNumber() < 10 ? 2 : 1;
-                    hasDoneFirstIndex = true;
+                if (!hasDoneFirstIndexSize) {
+                    firstIndexLength = setInitialDealIndexSize(index);
                 }
-                if (k < 7) {
-                    if (firstIndexLength == 2) {
-                        System.out.print("  x ");
-                    } else {
-                        System.out.print(" x  ");
-                    }
-                } else {
-                    System.out.print(cardDeck.get(index));
-                    cardDeck.get(index).setFlipped(true);
-                }
-                cardColumns[col].addToCardColumn(cardDeck.get(index));
-                cardDeck.remove(index);
-                col++;
+                printCardPlayingColumns(firstIndexLength, row, index);
+
+                manageDeckToCol(index, cardColumns[colIndex], cardDeck.get(index), cardDeck);
+                colIndex++;
             }
             System.out.println();
         }
+
+        createDrawPile();
+    }
+
+    private void manageDeckToCol(int index, CardColumn cardColumn, Card card, List<Card> cardDeck) {
+        cardColumn.addToCardColumn(card);
+        cardDeck.remove(index);
+    }
+
+    private void createDrawPile() {
         int cardsAdded = 0;
         int initRemainingCards = cardDeck.size();
         while (cardsAdded < initRemainingCards){
@@ -81,6 +89,34 @@ public class Solitaire {
             drawPile.add(cardDeck.get(index));
             cardDeck.remove(index);
             cardsAdded++;
+        }
+    }
+
+    private int setInitialDealIndexSize(int index) {
+        int firstIndexLength;
+        firstIndexLength = cardDeck.get(index).getCardNumber() < 10 ? 2 : 1;
+        hasDoneFirstIndexSize = true;
+        return firstIndexLength;
+    }
+
+    private void printFirstSpaces(int spacesIndex) {
+        while (spacesIndex > 0) {
+            System.out.print("    ");
+            spacesIndex -= 1;
+        }
+    }
+
+    private void printCardPlayingColumns(int firstIndexLength, int row, int index) {
+        if (row < 7) {
+            if (firstIndexLength == 2) {
+                System.out.print("  x ");
+            } else {
+                System.out.print(" x  ");
+            }
+        } 
+        else {
+            System.out.print(cardDeck.get(index));
+            cardDeck.get(index).setFlipped(true);
         }
     }
 
@@ -96,7 +132,6 @@ public class Solitaire {
         checkWin();
         if(!hasWon){
             printTopOfGameField();
-            System.out.println();
             printBottomOfGameField();
         }
         else
@@ -110,25 +145,36 @@ public class Solitaire {
             printFoundation(i);
         }
         printDrawPile();
+        System.out.println();
     }
+
     private void printFoundation(int i) {
         if(i !=3){
-            if(cardFoundation[i] == null){
-                System.out.print("0, ");
-            }
-            else{
-                System.out.print(cardFoundation[i] + ", ");
-            }
+            printAllEmptyFoundations(i);
         }
         else{
-            if(cardFoundation[i] == null){
-                System.out.print("0");
-            }
-            else{
-                System.out.print(cardFoundation[i]);
-            }
+            printUsedFoundations(i);
         }
     }
+
+    private void printAllEmptyFoundations(int i) {
+        if(cardFoundation[i] == null){
+            System.out.print("0, ");
+        }
+        else{
+            System.out.print(cardFoundation[i] + ", ");
+        }
+    }
+
+    private void printUsedFoundations(int i) {
+        if(cardFoundation[i] == null){
+            System.out.print("0");
+        }
+        else{
+            System.out.print(cardFoundation[i]);
+        }
+    }
+    
     private void printDrawPile() {
         if(posInDrawPile >= drawPile.size()){
             posInDrawPile = -1;
@@ -141,27 +187,32 @@ public class Solitaire {
         }
     }
     private void printBottomOfGameField() {
-        for(int i = 0; i < getMaxColLength(); i++) {
-            boolean hasDoneFirstIndex = false;
+        for(int row = 0; row < getMaxColLength(); row++) {
+            hasDoneFirstIndexSize = false;
             int firstIndexLength = -1;
 
-            for (int k = 0; k < 7; k++) {
-                if (!hasDoneFirstIndex) {
-                    if (i < cardColumns[k].getColSize() && cardColumns[k].getCard(i) != null) {
-                        firstIndexLength = cardColumns[k].getCard(i).getCardNumber() < 10 ? 2 : 1;
-                        hasDoneFirstIndex = true;
-                    }
+            for (int col = 0; col < 7; col++) {
+                if (!hasDoneFirstIndexSize) {
+                    firstIndexLength = setFirstIndexLengthOfRedraw(row, col);
                 }
-                if (i >= cardColumns[k].getColSize()) {
+                if (row >= cardColumns[col].getColSize()) {
                     printSpaces();
                 }
                 else
                 {
-                    printCards(i, firstIndexLength, k);
+                    printCards(row, firstIndexLength, col);
                 }
             }
             System.out.println();
         }
+    }
+
+    private int setFirstIndexLengthOfRedraw(int row,  int col) {
+        if (row < cardColumns[col].getColSize() && cardColumns[col].getCard(row) != null) {
+            hasDoneFirstIndexSize = true;
+            return cardColumns[col].getCard(row).getCardNumber() < 10 ? 2 : 1;
+        }
+        return 0;
     }
 
     private void printSpaces() {
@@ -192,43 +243,63 @@ public class Solitaire {
         if(ableToMoveCardsFromColToCol(cardColumns[fromCol - 1], cardColumns[toCol - 1], fromCardToCheck, toCardToCheck) == true){
 
             Card[] cardsToMove = new Card[numCards];
-            for(int i = 0; i < numCards; i++){
-                cardsToMove[i] = cardColumns[fromCol-1].getBottomCard();
-            }
-
-            for(int i = numCards-1; i >=0; i--){
-                cardColumns[toCol-1].addToCardColumn(cardsToMove[i]);
-            }
+            getCards(cardColumns[fromCol - 1], numCards, cardsToMove);
+            addCards(cardColumns[toCol - 1], numCards, cardsToMove);
         }
 
         redrawAfterPlay();
     }
+
+    private void addCards(CardColumn cardColumn, int numCards, Card[] cardsToMove) {
+        for(int i = numCards-1; i >=0; i--){
+            cardColumn.addToCardColumn(cardsToMove[i]);
+        }
+    }
+
+    private void getCards(CardColumn cardColumn, int numCards, Card[] cardsToMove) {
+        for(int i = 0; i < numCards; i++){
+            cardsToMove[i] = cardColumn.getBottomCard();
+        }
+    }
+
     public void moveCardFromDrawToCol(int toCol){
 
         int toCardToCheck = cardColumns[toCol-1].getColSize()-1;
-        if(cardColumns[toCol-1].getColSize() == 0 && drawPile.get(posInDrawPile).getCardNumber() == 13){
-            Card cardToMove = drawPile.get(posInDrawPile);
-            cardToMove.setFlipped(true);
-            cardColumns[toCol-1].addToCardColumn(cardToMove);
-            drawPile.remove(posInDrawPile);
+        if(cardColumns[toCol-1].getColSize() == 0 && drawPile.get(posInDrawPile).getCardNumber() != 13){
+            // invalid move
+            redrawAfterPlay();
         }
         else if(ableToMoveCardsFromDrawToCol(cardColumns[toCol - 1], toCardToCheck) == true){
-            Card cardToMove = drawPile.get(posInDrawPile);
-            cardToMove.setFlipped(true);
-            cardColumns[toCol-1].addToCardColumn(cardToMove);
-            drawPile.remove(posInDrawPile);
+            moveCardToCol(cardColumns[toCol - 1]);
         }
+        else{
+            redrawAfterPlay();
+        }
+
+    }
+
+    private void moveCardToCol(CardColumn cardColumn) {
+        Card cardToMove = drawPile.get(posInDrawPile);
+        cardToMove.setFlipped(true);
+        cardColumn.addToCardColumn(cardToMove);
+        drawPile.remove(posInDrawPile);
         redrawAfterPlay();
     }
+
     public void moveCardFromDrawToFoundation(int toFoundation){
         if(ableToMoveFromDrawToFoundation(toFoundation) == true){
-            Card cardToMove = drawPile.get(posInDrawPile);
-            cardToMove.setFlipped(true);
-            cardFoundation[toFoundation-1] = cardToMove;
-            drawPile.remove(posInDrawPile);
+            moveCardToTop(toFoundation);
         }
         redrawAfterPlay();
     }
+
+    private void moveCardToTop(int toFoundation) {
+        Card cardToMove = drawPile.get(posInDrawPile);
+        cardToMove.setFlipped(true);
+        cardFoundation[toFoundation -1] = cardToMove;
+        drawPile.remove(posInDrawPile);
+    }
+
     public void MoveCardToFoundation(int fromCol, int toFoundation){
         int fromCardToCheck = cardColumns[fromCol-1].getColSize() - 1;
         if(ableToMoveCardsToFoundation(cardColumns[fromCol - 1], fromCardToCheck, toFoundation) == true){
@@ -245,19 +316,15 @@ public class Solitaire {
         redrawAfterPlay();
     }
     private boolean ableToMoveCardsFromColToCol(CardColumn fromCol, CardColumn toCol, int fromCardToCheck, int toCardToCheck) {
-        boolean areNumbersInOrder = false;
-        boolean areDifferentSuits = false;
+        boolean areNumbersInOrder;
+        boolean areDifferentSuits;
         boolean isAbleToMove = false;
 
         if(fromCol.getCard(fromCardToCheck).getCardNumber() == 13 && toCol.getColSize() == 0){
             return true;
         }
-        if (toCol.getCard(toCardToCheck).getCardNumber() - fromCol.getCard(fromCardToCheck).getCardNumber() == 1){
-            areNumbersInOrder = true;
-        }
-        if(fromCol.getCard(fromCardToCheck).getCardColor() != toCol.getCard(toCardToCheck).getCardColor()){
-            areDifferentSuits = true;
-        }
+        areNumbersInOrder = checkAreNumbersInOrder(toCol.getCard(toCardToCheck), fromCol.getCard(fromCardToCheck));
+        areDifferentSuits = checkAreDifferentSuits(toCol, toCardToCheck, fromCol.getCard(fromCardToCheck));
         if(areNumbersInOrder == true && areDifferentSuits == true){
             isAbleToMove = true;
         }
@@ -266,17 +333,14 @@ public class Solitaire {
         }
         return isAbleToMove;
     }
+
     private boolean ableToMoveCardsFromDrawToCol(CardColumn toCol, int toCardToCheck) {
-        boolean areNumbersInOrder = false;
-        boolean areDifferentSuits = false;
+        boolean areNumbersInOrder;
+        boolean areDifferentSuits;
         boolean isAbleToMove = false;
 
-        if (toCol.getCard(toCardToCheck).getCardNumber() - drawPile.get(posInDrawPile).getCardNumber() == 1){
-            areNumbersInOrder = true;
-        }
-        if(drawPile.get(posInDrawPile).getCardColor() != toCol.getCard(toCardToCheck).getCardColor()){
-            areDifferentSuits = true;
-        }
+        areNumbersInOrder = checkAreNumbersInOrder(toCol.getCard(toCardToCheck), drawPile.get(posInDrawPile));
+        areDifferentSuits = checkAreDifferentSuits(toCol, toCardToCheck, drawPile.get(posInDrawPile));
         if(areNumbersInOrder == true && areDifferentSuits == true){
             isAbleToMove = true;
         }
@@ -285,17 +349,15 @@ public class Solitaire {
         }
         return isAbleToMove;
     }
+
     private boolean ableToMoveCardsToFoundation(CardColumn cardColumn, int fromCardToCheck, int toFoundationToCheck) {
-        boolean areNumbersInOrder = false;
-        boolean areSameSuit = false;
+        boolean areNumbersInOrder;
+        boolean areSameSuit;
         boolean isAbleToMove = false;
         if(cardFoundation[toFoundationToCheck-1] != null){
-            if (cardColumn.getCard(fromCardToCheck).getCardNumber() - cardFoundation[toFoundationToCheck-1].getCardNumber() == 1){
-                areNumbersInOrder = true;
-            }
-            if(cardColumn.getCard(fromCardToCheck).getCardColor() == cardFoundation[toFoundationToCheck-1].getCardColor()){
-                areSameSuit = true;
-            }
+            areNumbersInOrder = checkAreNumbersInOrder(cardColumn.getCard(fromCardToCheck), cardFoundation[toFoundationToCheck-1]);
+            areSameSuit = checkAreSameSuit(toFoundationToCheck, cardColumn.getCard(fromCardToCheck));
+
             if(areNumbersInOrder == true && areSameSuit == true){
                 isAbleToMove = true;
             }
@@ -309,30 +371,51 @@ public class Solitaire {
         return isAbleToMove;
     }
     private boolean ableToMoveFromDrawToFoundation(int toFoundationToCheck) {
-        boolean areNumbersInOrder = false;
-        boolean areSameSuit = false;
         boolean isAbleToMove = false;
-        if(cardFoundation[toFoundationToCheck-1] != null){
-            if (drawPile.get(posInDrawPile).getCardNumber() - cardFoundation[toFoundationToCheck-1].getCardNumber() == 1){
-                areNumbersInOrder = true;
-            }
-            if(drawPile.get(posInDrawPile).getCardColor() == cardFoundation[toFoundationToCheck-1].getCardColor()){
-                areSameSuit = true;
-            }
+        isAbleToMove = checkAbleToMove(toFoundationToCheck, isAbleToMove);
+        return isAbleToMove;
+    }
+
+    private boolean checkAbleToMove(int toFoundationToCheck, boolean isAbleToMove) {
+        boolean areSameSuit;
+        boolean areNumbersInOrder;
+        if(cardFoundation[toFoundationToCheck -1] != null){
+            areNumbersInOrder = checkAreNumbersInOrder(drawPile.get(posInDrawPile), cardFoundation[toFoundationToCheck -1]);
+            areSameSuit = checkAreSameSuit(toFoundationToCheck,  drawPile.get(posInDrawPile));
+
             if(areNumbersInOrder == true && areSameSuit == true){
-                isAbleToMove = true;
+                return true;
             }
             else{
                 System.out.println("Invalid move");
             }
         }
         else if(drawPile.get(posInDrawPile).getCardNumber() == 1){
-            isAbleToMove = true;
+            return true;
         }
         else{
             System.out.println("Invalid move");
         }
-        return isAbleToMove;
+        return false;
+    }
+
+    private boolean checkAreSameSuit(int toFoundationToCheck, Card card) {
+        if (card.getCardColor() == cardFoundation[toFoundationToCheck - 1].getCardColor()) {
+            return true;
+        }
+        return false;
+    }
+    private boolean checkAreDifferentSuits(CardColumn toCol, int toCardToCheck, Card card) {
+        if (card.getCardColor() != toCol.getCard(toCardToCheck).getCardColor()) {
+            return true;
+        }
+        return false;
+    }
+    private boolean checkAreNumbersInOrder(Card card, Card card2) {
+        if (card.getCardNumber() - card2.getCardNumber() == 1) {
+            return true;
+        }
+        return false;
     }
     private int getMaxColLength(){
         int maxColLength = 0;
