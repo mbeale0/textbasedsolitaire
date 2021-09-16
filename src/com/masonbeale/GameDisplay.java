@@ -29,14 +29,17 @@ public class GameDisplay {
             for (int row = 7; row != col; row--) {
                 int index = (int) (Math.random() * gameLogic.getCardDeck().size());
                 if(spacesIndex != 0){
-                    printFirstSpaces(spacesIndex);
+
                 }
+
+                spacesIndex = printFirstSpaces(spacesIndex);
+
                 if (!gameLogic.getHasDoneFirstIndexSize()) {
                     firstIndexLength = setInitialDealIndexSize(index);
                 }
                 printCardPlayingColumns(firstIndexLength, row, index);
 
-                gameLogic.manageDeckToCol(index, gameLogic.getCardColumns()[colIndex], gameLogic.getCardDeck().get(index));
+                gameLogic.manageDeal(index, gameLogic.getCardColumns()[colIndex], gameLogic.getCardDeck().get(index));
                 colIndex++;
             }
             System.out.println();
@@ -51,11 +54,13 @@ public class GameDisplay {
         return firstIndexLength;
     }
 
-    private void printFirstSpaces(int spacesIndex) {
+    private int printFirstSpaces(int spacesIndex) {
         while (spacesIndex > 0) {
             System.out.print("    ");
+
             spacesIndex -= 1;
         }
+        return spacesIndex;
     }
 
     private void printCardPlayingColumns(int firstIndexLength, int row, int index) {
@@ -119,6 +124,7 @@ public class GameDisplay {
 
     private void printDrawPile() {
         int drawPilePos = gameLogic.getPosInDrawPile();
+        System.out.print(drawPilePos);
         if( drawPilePos >= gameLogic.getDrawPile().size()){
             gameLogic.setPosInDrawPile(-1);
         }

@@ -11,6 +11,7 @@ public class SolitaireGameLogic {
     private Card[] cardFoundation = new Card[4];
     private int posInDrawPile = -1;
     private boolean hasWon = false;
+    private int test;
     boolean hasDoneFirstIndexSize = false;
     GameDisplay gameDisplay = new GameDisplay();
     public SolitaireGameLogic(){
@@ -20,6 +21,14 @@ public class SolitaireGameLogic {
         for(int i =0; i < 7; i++){
             cardColumns[i] = new CardColumn();
         }
+    }
+
+    public int getTest() {
+        return test;
+    }
+
+    public void setTest(int test) {
+        this.test = test;
     }
 
     private void CreateInitialDeck() {
@@ -70,7 +79,7 @@ public class SolitaireGameLogic {
         this.hasDoneFirstIndexSize = hasDoneFirstIndexSize;
     }
 
-    public void manageDeckToCol(int index, CardColumn cardColumn, Card card) {
+    public void manageDeal(int index, CardColumn cardColumn, Card card) {
         cardColumn.addToCardColumn(card);
         cardDeck.remove(index);
     }
@@ -161,6 +170,7 @@ public class SolitaireGameLogic {
     public void useDrawPile(){
         posInDrawPile += 3;
         if(posInDrawPile >= drawPile.size()){
+
             posInDrawPile = -1;
         }
         gameDisplay.redrawAfterPlay();
