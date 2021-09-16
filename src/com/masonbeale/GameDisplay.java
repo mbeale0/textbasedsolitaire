@@ -1,10 +1,14 @@
 package com.masonbeale;
 
 public class GameDisplay {
-    static SolitaireGameLogic gameLogic = new SolitaireGameLogic();
+    static private SolitaireGameLogic gameLogic = new SolitaireGameLogic();
     public void dealInitialGame(){
         printTopOfInitialGame();
         printBottomOfInitialGame();
+    }
+
+    public SolitaireGameLogic getGameLogic() {
+        return gameLogic;
     }
 
     private void printTopOfInitialGame() {
@@ -97,14 +101,14 @@ public class GameDisplay {
 
     private void printFoundation(int i) {
         if(i !=3){
-            printAllFirstThreeFoundations(i);
+            printFirstThreeFoundations(i);
         }
         else{
-            printFinalFoundation(i);
+            printThirdFoundation(i);
         }
     }
 
-    private void printAllFirstThreeFoundations(int i) {
+    private void printFirstThreeFoundations(int i) {
         if(gameLogic.getCardFoundation()[i] == null){
             System.out.print("0, ");
         }
@@ -113,7 +117,7 @@ public class GameDisplay {
         }
     }
 
-    private void printFinalFoundation(int i) {
+    private void printThirdFoundation(int i) {
         if(gameLogic.getCardFoundation()[i] == null){
             System.out.print("0");
         }
@@ -124,7 +128,6 @@ public class GameDisplay {
 
     private void printDrawPile() {
         int drawPilePos = gameLogic.getPosInDrawPile();
-        System.out.print(drawPilePos);
         if( drawPilePos >= gameLogic.getDrawPile().size()){
             gameLogic.setPosInDrawPile(-1);
         }

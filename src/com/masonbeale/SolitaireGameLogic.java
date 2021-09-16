@@ -14,100 +14,79 @@ public class SolitaireGameLogic {
     private int test;
     boolean hasDoneFirstIndexSize = false;
     GameDisplay gameDisplay = new GameDisplay();
+
     public SolitaireGameLogic(){
         CreateInitialDeck();
-        Arrays.fill(cardFoundation, null);
+        Arrays.fill(this.cardFoundation, null);
 
         for(int i =0; i < 7; i++){
-            cardColumns[i] = new CardColumn();
+            this.cardColumns[i] = new CardColumn();
         }
-    }
-
-    public int getTest() {
-        return test;
-    }
-
-    public void setTest(int test) {
-        this.test = test;
     }
 
     private void CreateInitialDeck() {
         for(int i = 1; i <= 13; i++){
-            cardDeck.add(new Card(i, Card.Suit.Spades));
-            cardDeck.add(new Card(i, Card.Suit.Clubs));
-            cardDeck.add(new Card(i, Card.Suit.Diamonds));
-            cardDeck.add(new Card(i, Card.Suit.Hearts));
+            this.cardDeck.add(new Card(i, Card.Suit.Spades));
+            this.cardDeck.add(new Card(i, Card.Suit.Clubs));
+            this.cardDeck.add(new Card(i, Card.Suit.Diamonds));
+            this.cardDeck.add(new Card(i, Card.Suit.Hearts));
         }
     }
 
     public List<Card> getCardDeck() {
-        return cardDeck;
+        return this.cardDeck;
     }
-
-    public CardColumn[] getCardColumns() {
-        return cardColumns;
-    }
-
     public List<Card> getDrawPile() {
-        return drawPile;
+        return this.drawPile;
     }
-
+    public CardColumn[] getCardColumns() {
+        return this.cardColumns;
+    }
     public Card[] getCardFoundation() {
-        return cardFoundation;
+        return this.cardFoundation;
     }
-
-    public int getPosInDrawPile() {
-        return posInDrawPile;
-    }
-
+    public int getPosInDrawPile() { return this.posInDrawPile; }
+    public boolean getHasDoneFirstIndexSize() { return this.hasDoneFirstIndexSize; }
+    public boolean getHasWon() { return this.hasWon; }
+    public void setHasWon(boolean hasWon) { this.hasWon = hasWon; }
     public void setPosInDrawPile(int posInDrawPile) {
         this.posInDrawPile = posInDrawPile;
     }
-
-    public boolean getHasDoneFirstIndexSize() {
-        return hasDoneFirstIndexSize;
-    }
-
-    public boolean getHasWon() {
-        return hasWon;
-    }
-
-    public void setHasWon(boolean hasWon) {
-        this.hasWon = hasWon;
-    }
-    public void setHasDoneFirstIndexSize(boolean hasDoneFirstIndexSize) {
+    public void setHasDoneFirstIndexSize(boolean hasDoneFirstIndexSize)
+    {
         this.hasDoneFirstIndexSize = hasDoneFirstIndexSize;
     }
 
-    public void manageDeal(int index, CardColumn cardColumn, Card card) {
+    public void manageDeal(int index, CardColumn cardColumn, Card card)
+    {
         cardColumn.addToCardColumn(card);
-        cardDeck.remove(index);
+        this.cardDeck.remove(index);
     }
 
-    public void createDrawPile() {
+    public void createDrawPile()
+    {
         int cardsAdded = 0;
-        int initRemainingCards = cardDeck.size();
+        int initRemainingCards = this.cardDeck.size();
         while (cardsAdded < initRemainingCards){
             int index = (int)(Math.random() * cardDeck.size());
-            drawPile.add(cardDeck.get(index));
-            cardDeck.remove(index);
+            this.drawPile.add(cardDeck.get(index));
+            this.cardDeck.remove(index);
             cardsAdded++;
         }
     }
 
-    public void moveCardFromColToCol(int fromCol, int toCol, int numCards){
+    public void moveCardFromColToCol(int fromCol, int toCol, int numCards)
+    {
+        int fromCardToCheck = this.cardColumns[fromCol-1].getColSize() - numCards;
+        int toCardToCheck = this.cardColumns[toCol-1].getColSize()-1;
 
-        int fromCardToCheck = cardColumns[fromCol-1].getColSize() - numCards;
-        int toCardToCheck = cardColumns[toCol-1].getColSize()-1;
-
-        if(ableToMoveCardsFromColToCol(cardColumns[fromCol - 1], cardColumns[toCol - 1], fromCardToCheck, toCardToCheck) == true){
-
+        if(ableToMoveCardsFromColToCol(this.cardColumns[fromCol - 1], this.cardColumns[toCol - 1], fromCardToCheck, toCardToCheck) == true){
             Card[] cardsToMove = new Card[numCards];
-            getCards(cardColumns[fromCol - 1], numCards, cardsToMove);
-            addCards(cardColumns[toCol - 1], numCards, cardsToMove);
+            getCards(this.cardColumns[fromCol - 1], numCards, cardsToMove);
+            addCards(this.cardColumns[toCol - 1], numCards, cardsToMove);
         }
 
-        gameDisplay.redrawAfterPlay();
+        this.gameDisplay.redrawAfterPlay();
     }
 
     private void addCards(CardColumn cardColumn, int numCards, Card[] cardsToMove) {
@@ -124,57 +103,58 @@ public class SolitaireGameLogic {
 
     public void moveCardFromDrawToCol(int toCol){
 
-        int toCardToCheck = cardColumns[toCol-1].getColSize()-1;
-        if(cardColumns[toCol-1].getColSize() == 0 && drawPile.get(posInDrawPile).getCardNumber() != 13){
-            // invalid move
-            gameDisplay.redrawAfterPlay();
+        int toCardToCheck = this.cardColumns[toCol-1].getColSize()-1;
+        if(this.cardColumns[toCol-1].getColSize() == 0 && this.drawPile.get(this.posInDrawPile).getCardNumber() != 13){
+            System.out.println("Invalid move");
+            this.gameDisplay.redrawAfterPlay();
         }
-        else if(ableToMoveCardsFromDrawToCol(cardColumns[toCol - 1], toCardToCheck) == true){
-            moveCardToCol(cardColumns[toCol - 1]);
+        else if(ableToMoveCardsFromDrawToCol(this.cardColumns[toCol - 1], toCardToCheck) == true){
+            moveCardToCol(this.cardColumns[toCol - 1]);
         }
         else{
-            gameDisplay.redrawAfterPlay();
+            this.gameDisplay.redrawAfterPlay();
         }
     }
 
+    public void MoveCardToFoundation(int fromCol, int toFoundation){
+        int fromCardToCheck = this.cardColumns[fromCol-1].getColSize() - 1;
+        if(ableToMoveCardsToFoundation(this.cardColumns[fromCol - 1], fromCardToCheck, toFoundation) == true){
+            Card cardToMove = cardColumns[fromCol-1].getBottomCard();
+            this.cardFoundation[toFoundation-1] = cardToMove;
+        }
+        this.gameDisplay. redrawAfterPlay();
+    }
+    public void useDrawPile(){
+        this.posInDrawPile += 3;
+        if(this.posInDrawPile >= this.drawPile.size()){
+
+            this.posInDrawPile = -1;
+        }
+        this.gameDisplay.redrawAfterPlay();
+    }
+
     private void moveCardToCol(CardColumn cardColumn) {
-        Card cardToMove = drawPile.get(posInDrawPile);
+        Card cardToMove = this.drawPile.get(this.posInDrawPile);
         cardToMove.setFlipped(true);
         cardColumn.addToCardColumn(cardToMove);
-        drawPile.remove(posInDrawPile);
-        gameDisplay.redrawAfterPlay();
+        this.drawPile.remove(this.posInDrawPile);
+        this.gameDisplay.redrawAfterPlay();
     }
 
     public void moveCardFromDrawToFoundation(int toFoundation){
         if(ableToMoveFromDrawToFoundation(toFoundation) == true){
             moveCardToTop(toFoundation);
         }
-        gameDisplay.redrawAfterPlay();
+        this.gameDisplay.redrawAfterPlay();
     }
 
     private void moveCardToTop(int toFoundation) {
-        Card cardToMove = drawPile.get(posInDrawPile);
+        Card cardToMove = this.drawPile.get(this.posInDrawPile);
         cardToMove.setFlipped(true);
-        cardFoundation[toFoundation -1] = cardToMove;
-        drawPile.remove(posInDrawPile);
+        this.cardFoundation[toFoundation -1] = cardToMove;
+        this.drawPile.remove(this.posInDrawPile);
     }
 
-    public void MoveCardToFoundation(int fromCol, int toFoundation){
-        int fromCardToCheck = cardColumns[fromCol-1].getColSize() - 1;
-        if(ableToMoveCardsToFoundation(cardColumns[fromCol - 1], fromCardToCheck, toFoundation) == true){
-            Card cardToMove = cardColumns[fromCol-1].getBottomCard();
-            cardFoundation[toFoundation-1] = cardToMove;
-        }
-        gameDisplay. redrawAfterPlay();
-    }
-    public void useDrawPile(){
-        posInDrawPile += 3;
-        if(posInDrawPile >= drawPile.size()){
-
-            posInDrawPile = -1;
-        }
-        gameDisplay.redrawAfterPlay();
-    }
     private boolean ableToMoveCardsFromColToCol(CardColumn fromCol, CardColumn toCol, int fromCardToCheck, int toCardToCheck) {
         boolean areNumbersInOrder;
         boolean areDifferentSuits;
@@ -199,9 +179,12 @@ public class SolitaireGameLogic {
         boolean areDifferentSuits;
         boolean isAbleToMove = false;
 
-        areNumbersInOrder = checkAreNumbersInOrder(toCol.getCard(toCardToCheck), drawPile.get(posInDrawPile));
-        areDifferentSuits = checkAreDifferentSuits(toCol, toCardToCheck, drawPile.get(posInDrawPile));
-        if(areNumbersInOrder == true && areDifferentSuits == true){
+        areNumbersInOrder = checkAreNumbersInOrder(toCol.getCard(toCardToCheck), this.drawPile.get(this.posInDrawPile));
+        areDifferentSuits = checkAreDifferentSuits(toCol, toCardToCheck, this.drawPile.get(this.posInDrawPile));
+        if(toCol.getColSize() == 0 && this.drawPile.get(this.posInDrawPile).getCardNumber() == 13){
+            isAbleToMove = true;
+        }
+        else if(areNumbersInOrder == true && areDifferentSuits == true){
             isAbleToMove = true;
         }
         else{
@@ -214,8 +197,8 @@ public class SolitaireGameLogic {
         boolean areNumbersInOrder;
         boolean areSameSuit;
         boolean isAbleToMove = false;
-        if(cardFoundation[toFoundationToCheck-1] != null){
-            areNumbersInOrder = checkAreNumbersInOrder(cardColumn.getCard(fromCardToCheck), cardFoundation[toFoundationToCheck-1]);
+        if(this.cardFoundation[toFoundationToCheck-1] != null){
+            areNumbersInOrder = checkAreNumbersInOrder(cardColumn.getCard(fromCardToCheck), this.cardFoundation[toFoundationToCheck-1]);
             areSameSuit = checkAreSameSuit(toFoundationToCheck, cardColumn.getCard(fromCardToCheck));
 
             if(areNumbersInOrder == true && areSameSuit == true){
@@ -239,9 +222,9 @@ public class SolitaireGameLogic {
     private boolean checkAbleToMove(int toFoundationToCheck, boolean isAbleToMove) {
         boolean areSameSuit;
         boolean areNumbersInOrder;
-        if(cardFoundation[toFoundationToCheck -1] != null){
-            areNumbersInOrder = checkAreNumbersInOrder(drawPile.get(posInDrawPile), cardFoundation[toFoundationToCheck -1]);
-            areSameSuit = checkAreSameSuit(toFoundationToCheck,  drawPile.get(posInDrawPile));
+        if(this.cardFoundation[toFoundationToCheck -1] != null){
+            areNumbersInOrder = checkAreNumbersInOrder(this.drawPile.get(this.posInDrawPile), this.cardFoundation[toFoundationToCheck -1]);
+            areSameSuit = checkAreSameSuit(toFoundationToCheck, this.drawPile.get(this.posInDrawPile));
 
             if(areNumbersInOrder == true && areSameSuit == true){
                 return true;
@@ -250,7 +233,7 @@ public class SolitaireGameLogic {
                 System.out.println("Invalid move");
             }
         }
-        else if(drawPile.get(posInDrawPile).getCardNumber() == 1){
+        else if(this.drawPile.get(this.posInDrawPile).getCardNumber() == 1){
             return true;
         }
         else{
@@ -260,7 +243,7 @@ public class SolitaireGameLogic {
     }
 
     private boolean checkAreSameSuit(int toFoundationToCheck, Card card) {
-        if (card.getCardColor() == cardFoundation[toFoundationToCheck - 1].getCardColor()) {
+        if (card.getCardColor() == this.cardFoundation[toFoundationToCheck - 1].getCardColor()) {
             return true;
         }
         return false;
@@ -280,9 +263,9 @@ public class SolitaireGameLogic {
     public int getMaxColLength(){
         int maxColLength = 0;
 
-        for(int i = 0; i < cardColumns.length -1; i ++){
-            if(cardColumns[i].getColSize() < cardColumns[i+1].getColSize() ){
-                maxColLength = cardColumns[i+1].getColSize();
+        for(int i = 0; i < this.cardColumns.length -1; i ++){
+            if(this.cardColumns[i].getColSize() < this.cardColumns[i+1].getColSize() ){
+                maxColLength = this.cardColumns[i+1].getColSize();
             }
         }
         return maxColLength;
@@ -290,12 +273,12 @@ public class SolitaireGameLogic {
     public void checkWin(){
         int foundationSum = 0;
         for(int i = 0; i < 4; i++){
-            if(cardFoundation[i] != null){
-                foundationSum += cardFoundation[i].getCardNumber();
+            if(this.cardFoundation[i] != null){
+                foundationSum += this.cardFoundation[i].getCardNumber();
             }
         }
         if(foundationSum == 52){
-            hasWon = true;
+            this.hasWon = true;
         }
     }
 }

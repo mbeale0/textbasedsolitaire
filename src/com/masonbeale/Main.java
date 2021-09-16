@@ -4,14 +4,13 @@ import java.util.Scanner;
 
 public class Main {
     static GameDisplay display = new GameDisplay();
-    static SolitaireGameLogic gameLogic = new SolitaireGameLogic();
     static boolean isPlaying = true;
     public static void main(String[] args) {
         Scanner optionsScanner = new Scanner((System.in));
         printOptions();
         display.dealInitialGame();
         while (isPlaying){
-            if(!gameLogic.getHasWon()){
+            if(!display.getGameLogic().getHasWon()){
                 playTurn(optionsScanner);
             }
             else {
@@ -57,7 +56,7 @@ public class Main {
         System.out.println("Play Again? y/n");
         String playAgain = optionsScanner.nextLine().toLowerCase();
         if(playAgain == "y"){
-            gameLogic.setHasWon(false);
+            display.getGameLogic().setHasWon(false);
         }
         else if(playAgain == "n") {
             isPlaying = false;
@@ -88,7 +87,7 @@ public class Main {
 
         System.out.println("Enter # of cards you're moving");
         int numCards = valueScanner.nextInt();
-        gameLogic.moveCardFromColToCol(fromCol, toCol, numCards);
+        display.getGameLogic().moveCardFromColToCol(fromCol, toCol, numCards);
     }
     private static void moveToTop(){
         Scanner valueScanner = new Scanner(System.in);
@@ -98,22 +97,22 @@ public class Main {
         System.out.println("Enter top # you're moving to");
         int toFoundation = valueScanner.nextInt();
 
-        gameLogic.MoveCardToFoundation(fromCol, toFoundation);
+        display.getGameLogic().MoveCardToFoundation(fromCol, toFoundation);
     }
     private static void useDrawPile(){
-        gameLogic.useDrawPile();
+        display.getGameLogic().useDrawPile();
     }
     private static void moveDrawToCol(){
         Scanner valueScanner = new Scanner(System.in);
         System.out.println("Enter # of col you're moving to");
         int toCol = valueScanner.nextInt();
-        gameLogic.moveCardFromDrawToCol(toCol);
+        display.getGameLogic().moveCardFromDrawToCol(toCol);
     }
     private static void moveDrawToTop(){
         Scanner valueScanner = new Scanner(System.in);
         System.out.println("Enter # of top you're moving to");
         int toFound = valueScanner.nextInt();
-        gameLogic.moveCardFromDrawToFoundation(toFound);
+        display.getGameLogic().moveCardFromDrawToFoundation(toFound);
     }
     private static void quit(){
         isPlaying = false;
